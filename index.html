@@ -91,13 +91,14 @@
 				<h3>How were the locations approximated?</h3>
 				<p>The following steps were used to get the factory locations:</p><ol>
 					<li>The  data was collected from Fast Retailing (the <a href="https://www.fastretailing.com/eng/sustainability/labor/list.html">Fast Retailing Core Sewing Factory List</a> on their website).</li> 
-					<li>This was geocoded via the Google Cloud Geocoding API to get a latitude and longitude for each factory. It was an iterative process: <ul>
+					<li>This was geocoded via the Google Cloud Geocoding API to get a latitude and longitude for each factory. It took multiple steps: <ul>
 						<li>All factories were initially geocoded using the factory name. </li>
 						<li>Factories in China were geocoded again by the factory address, as the factory names did not yield accurate locations.</li>
 						<li>A small number of other factory names could not be found in the Google database, so these were geocoded via address instead. </li>
 					</ul>
 					<li>The resulting addresses were then manually checked for errors.<ul>
 						<li>If a point was geocoded incorrectly, the closest verifiable location (e.g. street name, town, province/state) was used for that particular factory.</li>
+						<li>Factories that were corrected manually in this way are noted in the map as <i>Modified = true</i>.</li>
 					</li>
 			</div>
 
@@ -141,14 +142,14 @@
 					var popupProperties = ["Factory name","Factory address","formatted_address", "latlong", "geocoded_field"];
 					var popupContent = '<table>';
 					popupContent += '<h4>' + feature.properties['Factory name'] + '</h4>' 
-						+ '<tr><td>Address </td><td>' + feature.properties['Factory address'] + '</td></tr>'
-						+ '<tr><td>Geocoded address</td><td>'+ feature.properties['formatted_address'] + '</td></tr>' 
-						+ '<tr><td>Lat/Long</td><td>'+ feature.properties['latlong'] + '</td></tr>';
+						+ '<tr><td><b>Address</b> </td><td>' + feature.properties['Factory address'] + '</td></tr>'
+						+ '<tr><td><b>Geocoded address</b></td><td>'+ feature.properties['formatted_address'] + '</td></tr>' 
+						+ '<tr><td><b>Lat/Long</b></td><td>'+ feature.properties['latlong'] + '</td></tr>';
 					var modified = false;
 					if (feature.properties["status"] == "MOD"){
 						modified = true; 
 					}
-					popupContent += '<tr><td>' + "Modified" + '</td><td>'+ modified + '</td></tr>';
+					popupContent += '<tr><td>' + "<b>Modified</b>" + '</td><td>'+ modified + '</td></tr>';
 					//marker.bindPopup(feature.properties['Factory name']);
 					popupContent += '</table>';
 					marker.bindPopup(popupContent);
