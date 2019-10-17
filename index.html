@@ -2,7 +2,7 @@
 <html>
 <head>
 	
-	<title>FR Factory Map</title>
+	<title>FR Partner Factory Map</title>
 
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +17,9 @@
 
 	<!-- Add jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 	<style>
 		html, body {
@@ -36,23 +39,35 @@
 		}
 	</style>
 
-	<style>body { padding: 0; margin: 0; } #map { height: 100%; width: 100vw; }</style>
+	<style>body { padding: 0; margin: 0; } #map { height: 80%; width: 100vw; }</style>
 </head>
 
 
 
 
 <body>
+	<div id='map'></div>
+	
 	<div class="page-header">
-  		<h1>FR Factory Map <small>Subtext for header</small></h1>
+		<h1>Fast Retailing Partner Factory Map</h1> 
+	</div>
+	<p>
+  		<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#about" aria-expanded="false" aria-controls="collapseExample">
+    			About this map	
+  		</button>
+	</p>
+	<div class="collapse" id="about">
+  		<div class="card card-body">
+			<p>This visualizes the factories provided by Fast Retailing in their official Partner Factory List from March 2019. According to FR, these 242 locations constitute the Uniqlo and GU core sewing factories worldwide.</p>
+			<p>Note that this is not an official Fast Retailing map and that locations are approximated from the factory names and addresses using Google Maps, OpenStreetMap, and the Geocoding API from Google Cloud service. </p>
+		</div>
 	</div>
 
-	<div id='map'></div>
 
 	<script>
 		var map = L.map('map', {
-			center: [20, 100],
-    			zoom: 3
+			center: [15, 100],
+    			zoom: 4
 		});
 
 		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
@@ -72,25 +87,17 @@
 					color: 'red',
 					fillColor:  'red',
 					fillOpacity: 1.0
-				}).bindTooltip(feature.properties.Name);
+				});
 			},
-			onEachFeature: function (feature, layer) {	
-				layer.on('click', function (e) {
-					// get coordinates from GeoJSON
-					var coords = e.target.feature.geometry.coordinates
-				}).addTo(map);
+			onEachFeature: function (feature, layer) {
+				layer.bindPopup(feature.properties['Factory name'])
 			}
-        	});
+		}).addTo(map);
 	});
 
 	</script>
 
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>
 
