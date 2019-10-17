@@ -12,8 +12,13 @@
 	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
 	
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
-
 	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+	
+	<link rel="stylesheet" href="./css/leaflet-sidebar.css" />
+	<script src="./js/leaflet-sidebar.js"></script>
+	
 
 	<!-- Add jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -22,13 +27,10 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 	<style>
-		html, body {
+		html, body, #map {
 			height: 100%;
 			margin: 0;
-		}
-		#map {
-			width: 600px;
-			height: 400px;
+			font: 11pt "Helvetica Neue", Arial, Helvetica, sans-serif;
 		}
 		div.title{
 			background: red;
@@ -39,31 +41,65 @@
 		}
 	</style>
 
-	<style>body { padding: 0; margin: 0; } #map { height: 80%; width: 100vw; }</style>
+	<style>body { padding: 0; margin: 0; } #map { height: 100%; width: 100vw; }</style>
 </head>
 
 
 
 
 <body>
-	<div id='map'></div>
-	
-	<div class="page-header">
-		<h1>Fast Retailing Partner Factory Map</h1> 
-	</div>
-	<p>
-  		<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#about" aria-expanded="false" aria-controls="collapseExample">
-    			About this map	
-  		</button>
-	</p>
-	<div class="collapse" id="about">
-  		<div class="card card-body">
-			<p>This visualizes the factories provided by Fast Retailing in their official Partner Factory List from March 2019. According to FR, these 242 locations constitute the Uniqlo and GU core sewing factories worldwide.</p>
-			<p>Note that this is not an official Fast Retailing map and that locations are approximated from the factory names and addresses using Google Maps, OpenStreetMap, and the Geocoding API from Google Cloud service. </p>
+
+	<div id="sidebar" class="sidebar collapsed">
+		<!-- Nav tabs -->
+		<div class="sidebar-tabs">
+			<ul role="tablist">
+				<li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+				<li><a href="#info" role="tab"><i class="fa fa-info-circle"></i></a></li>
+			</ul>
+			<ul role="tablist">
+				<li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+				<li><a href="https://github.com/hgonzal/fr-factory-map" role="tab" target="_blank"><i class="fa fa-github"></i></a></li>
+			</ul>
+		</div>
+
+	<!-- Tab panes -->
+		<div class="sidebar-content">
+			<div class="sidebar-pane" id="home">
+				<h1 class="sidebar-header">
+					Fast Retailing Partner Factory Map <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+				</h1>
+				<p><a title="FAST RETAILING [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:FAST_RETAILING_logo.svg"><img width="60%" alt="FAST RETAILING logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/FAST_RETAILING_logo.svg/256px-FAST_RETAILING_logo.svg.png"></a></p>
+				<p>
+					<a title="UNIQLO [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:UNIQLO_logo.svg"><img width="30%" alt="UNIQLO logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/UNIQLO_logo.svg/128px-UNIQLO_logo.svg.png"></a> 
+					<a title="G.U. CO., LTD. [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:GU_logo.svg"><img width="30%" alt="GU logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/GU_logo.svg/128px-GU_logo.svg.png"></a>
+				</p>
+				<p>This page visualizes the factories provided by Fast Retailing in their official Partner Factory List from March 2019. According to FR, these 242 locations constitute the Uniqlo and GU core sewing factories worldwide.</p>
+				<p>Note that this is not an official Fast Retailing map and that locations are approximated from the provided factory names and addresses. </p>
+
+			</div>
+
+			<div class="sidebar-pane" id="info">
+				<h1 class="sidebar-header">Information<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+				<h2>Disclaimer</h2><p>The locations specified here are <b>approximate</b> and based on the factory names and addresses provided by Fast Retailing. It is meant for visualization purposes only. </p>
+				<h2>How were the locations approximated?</h2>
+				<p>The following steps were used to get the factory locations:</p><ol>
+					<li>Data was collected from Fast Retailing via a PDF on their website, and converted into a CSV.</li> 
+					<li>CSV was geocoded via QGIS and the Google Cloud Geocoding API. It depended on a number of variables: <ul>
+						<li>All factories were initially geocoded using the factory name. </li>
+						<li>Factories in China were geocoded again by the factory address, as the factory names did not yield accurate locations.</li>
+						<li>A small number of other factory names could not be found in the Google database, so these were geocoded again via address instead. </li>
+					</ul>
+					<li>The resulting addresses were manually checked for errors. If the geocoded address was obviously incorrect, the closest verifiable location (e.g. factory name if it exists, town, province/state) was used for that particular factory's location.</li>
+			</div>
+
+			<div class="sidebar-pane" id="settings">
+				<h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+			</div>
 		</div>
 	</div>
 
-
+	<div id='map' class='sidebar-map'></div>
+	
 	<script>
 		var map = L.map('map', {
 			center: [15, 100],
@@ -78,7 +114,7 @@
 			id: 'mapbox.streets'
 		}).addTo(map);
 
-	$.getJSON('FR_GEOCODED_FACTORIES.geojson', function(data) {
+	$.getJSON('https://raw.githubusercontent.com/hgonzal/fr-factory-map/master/FR_GEOCODED_FACTORIES.geojson', function(data) {
         	bbTeam = L.geoJson(data, {	
 			pointToLayer: function(feature, latlng) {
 				return L.circleMarker(latlng, {
@@ -95,6 +131,8 @@
 		}).addTo(map);
 	});
 
+        	var sidebar = L.control.sidebar('sidebar').addTo(map);
+		sidebar.open('home');
 	</script>
 
 
