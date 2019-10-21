@@ -129,8 +129,8 @@
 	
 	<script>
 		var map = L.map('map', {
-			center: [15, 100],
-    			zoom: 4,
+			center: [20, 90],
+    			zoom: 3,
 			zoomControl: false
 		});
 		map.options.maxZoom = 12;
@@ -179,7 +179,7 @@
 			pointToLayer: function (feature, latlng) {
 				iconConf = {
 					iconClasses: 'fas fa-warehouse',
-					markerColor: 'green',
+					markerColor: 'purple',
 					iconColor: '#FFF'
 				}
 
@@ -211,8 +211,8 @@
 		millLayer.addTo(millSub)
 
 		var overlays = {
-			"Fast Retailing Core Sewing Factories" : factorySub,
-			"UNIQLO Core Fabric Mills" : millSub
+			" <font color=\"purple\"><i class=\"fa fa-map-marker-alt\"></i></font> Fast Retailing Core Sewing Factories" : factorySub,
+			" <font color=\"darkblue\"><i class=\"fa fa-map-marker-alt\"></i></font> UNIQLO Core Fabric Mills" : millSub
 		};
 
 		L.control.layers(null, overlays, {collapsed:false, position:'bottomright'}).addTo(map);
