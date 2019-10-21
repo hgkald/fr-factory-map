@@ -6,7 +6,7 @@
 
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
+
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	
 	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
@@ -49,6 +49,17 @@
 			margin-top: 8px;
 		}
 	</style>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-150529309-1"></script>
+        <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+
+                gtag('config', 'UA-150529309-1');
+        </script>
+
 
 </head>
 
@@ -118,7 +129,7 @@
 			zoomControl: false
 		});
 		map.options.maxZoom = 12;
-		var zoomHome = L.Control.zoomHome();
+		var zoomHome = L.Control.zoomHome({position: 'topright'});
 		zoomHome.addTo(map);
 		
 		var OSM_DE = L.tileLayer('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png', {
