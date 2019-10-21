@@ -138,7 +138,7 @@
 		});
 		OSM_DE.addTo(map); 
 
-		$.getJSON("https://raw.githubusercontent.com/hgonzal/fr-factory-map/master/FR_GEOCODED_FACTORIES.geojson", function(data) {
+		$.getJSON("https://raw.githubusercontent.com/hgonzal/fr-factory-map/master/data/FR_GEOCODED_FACTORIES.geojson", function(data) {
 			var clusters = L.markerClusterGroup();
 			var incidents = L.geoJson(data, {
 				pointToLayer: function(feature, latlng) {
