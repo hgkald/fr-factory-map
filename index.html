@@ -30,7 +30,6 @@
 	<link rel="stylesheet" href="./css/L.Icon.FontAwesome.css"/>
 	<script src="./js/L.Icon.FontAwesome.js"></script>
 
-	<!-- Add jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -42,11 +41,6 @@
 			width: 100vw; 
 			margin: 0;
 			font: 11pt "Helvetica Neue", Arial, Helvetica, sans-serif;
-		}
-
-		.awesome-marker i {
-			font-size: 20px;
-			margin-top: 8px;
 		}
 	</style>
 
@@ -61,6 +55,8 @@
         </script>
 
 
+	<script src="./data/UNIQLO_COREFABRICMILLS_GEOCODED.js" type="text/javascript"></script>
+	<script src="./data/FR_GEOCODED_FACTORIES.js" type="text/javascript"></script>
 </head>
 
 
@@ -138,46 +134,71 @@
 		});
 		OSM_DE.addTo(map); 
 
-		$.getJSON("https://raw.githubusercontent.com/hgonzal/fr-factory-map/master/data/FR_GEOCODED_FACTORIES.geojson", function(data) {
-			var clusters = L.markerClusterGroup();
-			var incidents = L.geoJson(data, {
-				pointToLayer: function(feature, latlng) {
 
-					var marker = L.marker(latlng, {
-						icon: L.icon.fontAwesome({ 
-							iconClasses: 'fas fa-warehouse', 
-							markerColor: 'green',
-							iconColor: '#FFF'
-						})
-					});
-					var popupProperties = ["Factory name","Factory address","formatted_address", "latlong", "geocoded_field"];
-					var popupContent = '<table>';
-					popupContent += '<h4>' + feature.properties['Factory name'] + '</h4>' 
-						+ '<tr><td><b>Address</b> </td><td>' + feature.properties['Factory address'] + '</td></tr>'
-						+ '<tr><td><b>Geocoded address</b></td><td>'+ feature.properties['formatted_address'] + '</td></tr>' 
-						+ '<tr><td><b>Lat/Long</b></td><td>'+ feature.properties['latlong'] + '</td></tr>';
-					var modified = false;
-					if (feature.properties["status"] == "MOD"){
-						modified = true; 
-					}
-					popupContent += '<tr><td>' + "<b>Modified</b>" + '</td><td>'+ modified + '</td></tr>';
-					//marker.bindPopup(feature.properties['Factory name']);
-					popupContent += '</table>';
-					marker.bindPopup(popupContent);
-					return marker;
-				},
-				onEachFeature: function (feature, layer) {
-					layer.addTo(clusters);
-				}
-			});
-			map.addLayer(clusters);
+	function createMarker(feature, latlng, iconConf) {
+		var marker = L.marker(latlng, {
+			icon: L.icon.fontAwesome(iconConf)
 		});
+		var popupProperties = ["Factory name","Factory address","formatted_address", "latlong", "geocoded_field"];
+		var popupContent = '<table>';
+		popupContent += '<h4>' + feature.properties['Factory name'] + '</h4>'
+			+ '<tr><td><b>Address</b> </td><td>' + feature.properties['Factory address'] + '</td></tr>'
+			+ '<tr><td><b>Geocoded address</b></td><td>'+ feature.properties['formatted_address'] + '</td></tr>'
+			+ '<tr><td><b>Lat/Long</b></td><td>'+ feature.properties['latlong'] + '</td></tr>';
+		var modified = false;
+		if (feature.properties["status"] == "MOD"){
+			modified = true;
+		}
+		popupContent += '<tr><td>' + "<b>Modified</b>" + '</td><td>'+ modified + '</td></tr>';
+		//marker.bindPopup(feature.properties['Factory name']);
+		popupContent += '</table>';
+		marker.bindPopup(popupContent);
+		return marker; 
+	}
 
+	var clusters = L.markerClusterGroup();
+        var factoryLayer = L.geoJson(factoryJson, {
+               	pointToLayer: function (feature, latlng) {
+			iconConf = {
+				iconClasses: 'fas fa-warehouse',
+				markerColor: 'green',
+				iconColor: '#FFF'
+			}
 
-        var sidebar = L.control.sidebar('sidebar').addTo(map);
+			return createMarker(feature, latlng, iconConf);
+		},
+		onEachFeature: function (feature, layer) {
+			layer.addTo(clusters);
+		}
+        });
+	//map.addLayer(clusters);
+
+	var millLayer = L.geoJson(fabricMillJson, {
+                pointToLayer: function (feature, latlng) {
+                        iconConf = {
+                                iconClasses: 'fas fa-warehouse',
+                                markerColor: 'darkblue',
+                                iconColor: '#FFF'
+                        }
+
+                        return createMarker(feature, latlng, iconConf) 
+                },
+		onEachFeature: function (feature, layer) {
+			layer.addTo(clusters);
+		}
+        });
+	map.addLayer(clusters);
+
+	var overlays = {
+		"Factories and Mills" : clusters
+	};
+
+	L.control.layers(null, overlays).addTo(map);
+
+	var sidebar = L.control.sidebar('sidebar').addTo(map);
 	//sidebar.open('home');
-	</script>
 
+	</script>
 
 </body>
 </html>
