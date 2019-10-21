@@ -35,6 +35,8 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
+	<script src="./js/subgroup.js"></script>
+
 	<style>
 		html, body, #map {
 			height: 100%;
@@ -42,6 +44,9 @@
 			margin: 0;
 			font: 11pt "Helvetica Neue", Arial, Helvetica, sans-serif;
 		}
+
+		tr:nth-child(odd) {background-color: #f2f2f2;}
+
 	</style>
 
         <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -87,8 +92,8 @@
 					<a title="UNIQLO [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:UNIQLO_logo.svg"><img width="30%" alt="UNIQLO logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/UNIQLO_logo.svg/128px-UNIQLO_logo.svg.png"></a> 
 					<a title="G.U. CO., LTD. [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:GU_logo.svg"><img width="30%" alt="GU logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/GU_logo.svg/128px-GU_logo.svg.png"></a>
 				</p>
-				<p>This page visualizes the factories provided by Fast Retailing in their official Partner Factory List from March 2019. According to FR, these 242 locations constitute the Uniqlo and GU core sewing factories worldwide.</p>
-				<p>Note that this is not an official Fast Retailing map and that locations are approximated from the provided factory names and addresses. </p>
+				<p>This page visualizes the factories provided by Fast Retailing <a href='https://www.fastretailing.com/eng/sustainability/labor/list.html'>from their official partner factory list</a>. According to FR, there are 242 Uniqlo and GU core sewing factories and 49 core UNIQLO fabric mills, as visualized here.</p>
+				<p>Note that this is <b>not</b> an official Fast Retailing map and that locations are approximated from the provided factory names and addresses. </p>
 
 			</div>
 
@@ -97,9 +102,12 @@
 				<h3>Disclaimer</h3><p>The locations specified here are <b>approximate</b> and based on the factory names and addresses provided by Fast Retailing. Some points may only be accurate to a city or state level and is meant for visualization purposes only.</p>
 				<h3>How were the locations approximated?</h3>
 				<p>The following steps were used to get the factory locations:</p><ol>
-					<li>The  data was collected from Fast Retailing (the <a href="https://www.fastretailing.com/eng/sustainability/labor/list.html">Fast Retailing Core Sewing Factory List</a> on their website).</li> 
-					<li>This was geocoded via the Google Cloud Geocoding API to get a latitude and longitude for each factory. It took multiple steps: <ul>
-						<li>All factories were initially geocoded using the factory name. </li>
+					<li>The  data was collected from Fast Retailing <a href="https://www.fastretailing.com/eng/sustainability/labor/list.html">from their website</a>. The main sources are:</li> <ul>
+						<li>The <i>Fast Retailing Core Sewing Factory List</i>, dated March 2019. 
+						<li>The <i>UNIQLO Core Fabric Mill List</i>, dated April 2019.
+					</ul>
+					<li>These were geocoded via the Google Cloud Geocoding API to get a latitude and longitude for each factory. It took multiple steps: <ul>
+						<li>Factories were initially geocoded using the factory name. </li>
 						<li>Factories in China were geocoded again by the factory address, as the factory names did not yield accurate locations.</li>
 						<li>A small number of other factory names could not be found in the Google database, so these were geocoded via address instead. </li>
 					</ul>
@@ -127,7 +135,10 @@
 		map.options.maxZoom = 12;
 		var zoomHome = L.Control.zoomHome({position: 'topright'});
 		zoomHome.addTo(map);
-		
+
+	        var sidebar = L.control.sidebar('sidebar').addTo(map);
+        	//sidebar.open('home');
+
 		var OSM_DE = L.tileLayer('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png', {
 			maxZoom: 18,
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -135,68 +146,76 @@
 		OSM_DE.addTo(map); 
 
 
-	function createMarker(feature, latlng, iconConf) {
-		var marker = L.marker(latlng, {
-			icon: L.icon.fontAwesome(iconConf)
-		});
-		var popupProperties = ["Factory name","Factory address","formatted_address", "latlong", "geocoded_field"];
-		var popupContent = '<table>';
-		popupContent += '<h4>' + feature.properties['Factory name'] + '</h4>'
-			+ '<tr><td><b>Address</b> </td><td>' + feature.properties['Factory address'] + '</td></tr>'
-			+ '<tr><td><b>Geocoded address</b></td><td>'+ feature.properties['formatted_address'] + '</td></tr>'
-			+ '<tr><td><b>Lat/Long</b></td><td>'+ feature.properties['latlong'] + '</td></tr>';
-		var modified = false;
-		if (feature.properties["status"] == "MOD"){
-			modified = true;
-		}
-		popupContent += '<tr><td>' + "<b>Modified</b>" + '</td><td>'+ modified + '</td></tr>';
-		//marker.bindPopup(feature.properties['Factory name']);
-		popupContent += '</table>';
-		marker.bindPopup(popupContent);
-		return marker; 
-	}
+		function createMarker(feature, latlng, iconConf, markerType) {
+			var marker = L.marker(latlng, {
+				icon: L.icon.fontAwesome(iconConf)
+			});
 
-	var clusters = L.markerClusterGroup();
-        var factoryLayer = L.geoJson(factoryJson, {
-               	pointToLayer: function (feature, latlng) {
-			iconConf = {
-				iconClasses: 'fas fa-warehouse',
-				markerColor: 'green',
-				iconColor: '#FFF'
+			var popupProperties = ["Factory name","Factory address","formatted_address", "latlong", "geocoded_field"];
+			var popupContent = '<table>';
+			popupContent += '<h4>' + feature.properties['Factory name'] + '</h4>'
+				+ '<tr><td><b>Type</b> </td><td>' + markerType + '</td></tr>'
+				+ '<tr><td><b>Address</b> </td><td>' + feature.properties['Factory address'] + '</td></tr>'
+				+ '<tr><td><b>Geocoded address</b></td><td>'+ feature.properties['formatted_address'] + '</td></tr>'
+				+ '<tr><td><b>Lat/Long</b></td><td>'+ feature.properties['latlong'] + '</td></tr>';
+			var modified = false;
+			if (feature.properties["status"] == "MOD"){
+				modified = true;
 			}
-
-			return createMarker(feature, latlng, iconConf);
-		},
-		onEachFeature: function (feature, layer) {
-			layer.addTo(clusters);
+			popupContent += '<tr><td>' + "<b>Modified</b>" + '</td><td>'+ modified + '</td></tr>';
+			//marker.bindPopup(feature.properties['Factory name']);
+			popupContent += '</table>';
+			marker.bindPopup(popupContent);
+			return marker; 
 		}
-        });
-	//map.addLayer(clusters);
 
-	var millLayer = L.geoJson(fabricMillJson, {
-                pointToLayer: function (feature, latlng) {
-                        iconConf = {
-                                iconClasses: 'fas fa-warehouse',
-                                markerColor: 'darkblue',
-                                iconColor: '#FFF'
-                        }
+		var mcg = L.markerClusterGroup().addTo(map);
+		var factorySub = L.featureGroup.subGroup(mcg).addTo(map);
+		var millSub = L.featureGroup.subGroup(mcg).addTo(map);
 
-                        return createMarker(feature, latlng, iconConf) 
-                },
-		onEachFeature: function (feature, layer) {
-			layer.addTo(clusters);
-		}
-        });
-	map.addLayer(clusters);
+		var clusters = L.markerClusterGroup();
+		var factoryLayer = L.geoJson(factoryJson, {
+			pointToLayer: function (feature, latlng) {
+				iconConf = {
+					iconClasses: 'fas fa-warehouse',
+					markerColor: 'green',
+					iconColor: '#FFF'
+				}
 
-	var overlays = {
-		"Factories and Mills" : clusters
-	};
+				return createMarker(feature, latlng, iconConf, 'Sewing factory');
+			},
+			onEachFeature: function (feature, layer) {
+				layer.addTo(clusters);
+			}
+		});
+		//map.addLayer(clusters);
+		factoryLayer.addTo(factorySub)
 
-	L.control.layers(null, overlays).addTo(map);
+		var millClusters = L.markerClusterGroup();
+		var millLayer = L.geoJson(fabricMillJson, {
+			pointToLayer: function (feature, latlng) {
+				iconConf = {
+					iconClasses: 'fas fa-warehouse',
+					markerColor: 'darkblue',
+					iconColor: '#FFF'
+				}
 
-	var sidebar = L.control.sidebar('sidebar').addTo(map);
-	//sidebar.open('home');
+				return createMarker(feature, latlng, iconConf, 'Fabric mill') 
+			},
+			onEachFeature: function (feature, layer) {
+				layer.addTo(millClusters);
+			}
+		});
+		//map.addLayer(millClusters);
+		millLayer.addTo(millSub)
+
+		var overlays = {
+			"Fast Retailing Core Sewing Factories" : factorySub,
+			"UNIQLO Core Fabric Mills" : millSub
+		};
+
+		L.control.layers(null, overlays, {collapsed:false}).addTo(map);
+
 
 	</script>
 
