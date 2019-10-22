@@ -40,10 +40,13 @@
 	<style>
 		html, body, #map {
 			height: 100%;
-			width: 100vw; 
-			margin: 0;
+			width: 100vw;
+			margin: 0; 
 			font: 11pt "Helvetica Neue", Arial, Helvetica, sans-serif;
 		}
+		p { 
+			margin: 4px 4px; 
+		} 
 
 		tr:nth-child(odd) {background-color: #f2f2f2;}
 
@@ -62,6 +65,7 @@
 
 	<script src="./data/UNIQLO_COREFABRICMILLS_GEOCODED.js" type="text/javascript"></script>
 	<script src="./data/FR_GEOCODED_FACTORIES.js" type="text/javascript"></script>
+	<script>var str = "hell" + "o [a" + "t" + "] h" + "anag" + "onza" + "les [d" + "ot" + "] com"</script>
 </head>
 
 
@@ -78,6 +82,7 @@
 			</ul>
 			<ul role="tablist">
 				<li><a href="https://github.com/hgonzal/fr-factory-map" role="tab" target="_blank"><i class="fab fa-github"></i></a></li>
+				<li><a href="#contact" role="tab"><i class="fas fa-envelope"></i></a></li>
 			</ul>
 		</div>
 
@@ -92,7 +97,7 @@
 					<a title="UNIQLO [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:UNIQLO_logo.svg"><img width="30%" alt="UNIQLO logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/UNIQLO_logo.svg/128px-UNIQLO_logo.svg.png"></a> 
 					<a title="G.U. CO., LTD. [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:GU_logo.svg"><img width="30%" alt="GU logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/GU_logo.svg/128px-GU_logo.svg.png"></a>
 				</p>
-				<p>This page visualizes the factories provided by Fast Retailing <a href='https://www.fastretailing.com/eng/sustainability/labor/list.html'>from their official partner factory list</a>. According to FR, there are 242 Uniqlo and GU core sewing factories and 49 core UNIQLO fabric mills, as visualized here.</p>
+				<p>This page visualizes the factories provided by Fast Retailing <a href='https://www.fastretailing.com/eng/sustainability/labor/list.html'>from their official partner factory list</a>. According to FR, there are 242 Uniqlo and GU core sewing factories and 49 core UNIQLO fabric mills, as shown here.</p>
 				<p>Note that this is <b>not</b> an official Fast Retailing map and that locations are approximated from the provided factory names and addresses. </p>
 
 			</div>
@@ -102,9 +107,9 @@
 				<h3>Disclaimer</h3><p>The locations specified here are <b>approximate</b> and based on the factory names and addresses provided by Fast Retailing. Some points may only be accurate to a city or state level and is meant for visualization purposes only.</p>
 				<h3>How were the locations approximated?</h3>
 				<p>The following steps were used to get the factory locations:</p><ol>
-					<li>The  data was collected from Fast Retailing <a href="https://www.fastretailing.com/eng/sustainability/labor/list.html">from their website</a>. The main sources are:</li> <ul>
-						<li>The <i>Fast Retailing Core Sewing Factory List</i>, dated March 2019. 
-						<li>The <i>UNIQLO Core Fabric Mill List</i>, dated April 2019.
+					<li>The  data was collected from Fast Retailing <a href="https://www.fastretailing.com/eng/sustainability/labor/list.html">from their website</a>. The main sources are: <ul>
+						<li><i>Fast Retailing Core Sewing Factory List</i>, dated March 2019. 
+						<li><i>UNIQLO Core Fabric Mill List</i>, dated April 2019.
 					</ul>
 					<li>These were geocoded via the Google Cloud Geocoding API to get a latitude and longitude for each factory. It took multiple steps: <ul>
 						<li>Factories were initially geocoded using the factory name. </li>
@@ -115,7 +120,18 @@
 						<li>If a point was geocoded incorrectly, the closest verifiable location (e.g. street name, town, province/state) was used for that particular factory.</li>
 						<li>Factories that were corrected manually in this way are noted in the map as <i>Modified = true</i>.</li>
 					</li>
+					
 			</div>
+
+                        <div class="sidebar-pane" id="contact">
+                                <h1 class="sidebar-header">Contact<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+				<p>This page is created by Hana Gonzales. If there are any questions or issues please leave a comment via <a href="https://github.com/hgonzal/fr-factory-map" target="_blank">Github</a> or email 
+				<script type="text/javascript">
+					document.write(str)
+				</script>. </p>
+
+                        </div>
+
 
 			</div>
 			<div class="sidebar-pane" id="settings">
